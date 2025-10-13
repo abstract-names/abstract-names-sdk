@@ -1,20 +1,17 @@
-import type { Address } from 'viem';
 import { useReadContract } from 'wagmi';
 import { resolverAbi } from '../abis/resolver';
 import type { AbstractNamesConfig } from '../types';
 
-export interface UseReverseResolveParams {
-  /** The address to reverse resolve */
-  address?: Address;
+export interface UseAllowedTextKeysParams {
   /** Configuration with contract addresses */
   config: AbstractNamesConfig;
   /** Enable/disable the query */
   enabled?: boolean;
 }
 
-export interface UseReverseResolveResult {
-  /** The primary name (with .abs suffix) */
-  data: string | undefined;
+export interface UseAllowedTextKeysResult {
+  /** Array of allowed text record keys */
+  data: readonly string[] | undefined;
   /** Loading state */
   isLoading: boolean;
   /** Error state */
@@ -24,37 +21,38 @@ export interface UseReverseResolveResult {
 }
 
 /**
- * Hook to reverse resolve an address to its primary Abstract Name
+ * Hook to get the list of allowed text record keys
+ *
+ * Useful for building profile editors and knowing which fields are supported.
  *
  * @example
  * ```tsx
- * const { data: name, isLoading } = useReverseResolve({
- *   address: '0x1234...',
+ * const { data: allowedKeys } = useAllowedTextKeys({
  *   config: abstractTestnetConfig
  * });
+ *
+ * // Use in a form builder
+ * {allowedKeys?.map(key => (
+ *   <input key={key} placeholder={key} />
+ * ))}
  * ```
  */
-export function useReverseResolve({
-  address,
+export function useAllowedTextKeys({
   config,
   enabled = true,
-}: UseReverseResolveParams): UseReverseResolveResult {
+}: UseAllowedTextKeysParams): UseAllowedTextKeysResult {
   const { data, isLoading, error, refetch } = useReadContract({
     address: config.resolverAddress,
     abi: resolverAbi,
-    functionName: 'reverseResolve',
-    args: address ? [address] : undefined,
+    functionName: 'getAllowedTextKeys',
     chainId: config.chainId,
     query: {
-      enabled: enabled && !!address,
+      enabled,
     },
   });
 
-  // Filter out empty strings
-  const resolvedName = data && data !== '' ? data : undefined;
-
   return {
-    data: resolvedName,
+    data: data as readonly string[] | undefined,
     isLoading,
     error: error as Error | null,
     refetch,

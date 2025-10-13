@@ -1,8 +1,8 @@
-import { useReadContract } from 'wagmi';
 import type { Address } from 'viem';
 import { isAddress } from 'viem';
-import { resolverAbi } from '../abis/resolver';
+import { useReadContract } from 'wagmi';
 import { registryAbi } from '../abis/registry';
+import { resolverAbi } from '../abis/resolver';
 import type { AbstractNamesConfig, NameProfile } from '../types';
 
 export interface UseProfileParams {
@@ -59,9 +59,8 @@ export function useProfile({
   const isAddr = nameOrAddress ? isAddress(nameOrAddress) : false;
 
   // For names: first get tokenId, then get profile
-  const normalizedName = !isAddr && nameOrAddress
-    ? nameOrAddress.replace(/\.abs$/, '')
-    : undefined;
+  const normalizedName =
+    !isAddr && nameOrAddress ? nameOrAddress.replace(/\.abs$/, '') : undefined;
 
   const { data: tokenId } = useReadContract({
     address: config.registryAddress,

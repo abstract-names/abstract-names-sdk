@@ -1,34 +1,52 @@
-// Main exports
-export { useResolve } from './hooks/useResolve';
-export { useReverseResolve } from './hooks/useReverseResolve';
-export { useProfile } from './hooks/useProfile';
-
-// Types
-export type {
-  AbstractNamesConfig,
-  NameProfile,
-  NameData,
-  TextRecord,
-  TextRecordKey,
-} from './types';
-export { TEXT_RECORD_KEYS } from './types';
-
-// Config
-export {
-  abstractTestnetConfig,
-  abstractMainnetConfig,
-  getConfig,
-  createConfig,
-} from './config';
+// Main exports - Hooks
 
 // ABIs (for advanced usage)
-export { resolverAbi } from './abis/resolver';
 export { registryAbi } from './abis/registry';
-
-// Re-export hook types
+export { resolverAbi } from './abis/resolver';
+// Config
+export {
+  abstractMainnetConfig,
+  abstractTestnetConfig,
+  createConfig,
+  getConfig,
+} from './config';
+export type {
+  UseAllowedTextKeysParams,
+  UseAllowedTextKeysResult,
+} from './hooks/useAllowedTextKeys';
+export { useAllowedTextKeys } from './hooks/useAllowedTextKeys';
+export type {
+  UseNameAvailabilityParams,
+  UseNameAvailabilityResult,
+} from './hooks/useNameAvailability';
+export { useNameAvailability } from './hooks/useNameAvailability';
+export type {
+  NameExpiryData,
+  UseNameExpiryParams,
+  UseNameExpiryResult,
+} from './hooks/useNameExpiry';
+export { useNameExpiry } from './hooks/useNameExpiry';
+export type { UseProfileParams, UseProfileResult } from './hooks/useProfile';
+export { useProfile } from './hooks/useProfile';
+// Hook types
 export type { UseResolveParams, UseResolveResult } from './hooks/useResolve';
+export { useResolve } from './hooks/useResolve';
 export type {
   UseReverseResolveParams,
   UseReverseResolveResult,
 } from './hooks/useReverseResolve';
-export type { UseProfileParams, UseProfileResult } from './hooks/useProfile';
+export { useReverseResolve } from './hooks/useReverseResolve';
+export type {
+  UseTextRecordParams,
+  UseTextRecordResult,
+} from './hooks/useTextRecord';
+export { useTextRecord } from './hooks/useTextRecord';
+// Types
+export type {
+  AbstractNamesConfig,
+  NameData,
+  NameProfile,
+  TextRecord,
+  TextRecordKey,
+} from './types';
+export { TEXT_RECORD_KEYS } from './types';

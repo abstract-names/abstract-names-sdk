@@ -1,6 +1,43 @@
 export const resolverAbi = [
   {
     type: 'function',
+    name: 'getText',
+    inputs: [
+      {
+        name: 'tokenId',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+      {
+        name: 'key',
+        type: 'string',
+        internalType: 'string',
+      },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'string',
+        internalType: 'string',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    name: 'getAllowedTextKeys',
+    inputs: [],
+    outputs: [
+      {
+        name: '',
+        type: 'string[]',
+        internalType: 'string[]',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
     name: 'getAddress',
     inputs: [
       {

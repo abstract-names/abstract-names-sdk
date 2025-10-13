@@ -1,10 +1,9 @@
-import type { Address } from 'viem';
 import { useReadContract } from 'wagmi';
-import { resolverAbi } from '../abis/resolver';
+import { registryAbi } from '../abis/registry';
 import type { AbstractNamesConfig } from '../types';
 
-export interface UseResolveParams {
-  /** The name to resolve (e.g., "vitalik" or "vitalik.abs") */
+export interface UseNameAvailabilityParams {
+  /** The name to check availability for (without .abs suffix) */
   name?: string;
   /** Configuration with contract addresses */
   config: AbstractNamesConfig;
@@ -12,9 +11,9 @@ export interface UseResolveParams {
   enabled?: boolean;
 }
 
-export interface UseResolveResult {
-  /** The resolved address */
-  data: Address | undefined;
+export interface UseNameAvailabilityResult {
+  /** Whether the name is available for registration */
+  data: boolean | undefined;
   /** Loading state */
   isLoading: boolean;
   /** Error state */
@@ -24,43 +23,40 @@ export interface UseResolveResult {
 }
 
 /**
- * Hook to resolve an Abstract Name to an address
+ * Hook to check if a name is available for registration
  *
  * @example
  * ```tsx
- * const { data: address, isLoading } = useResolve({
- *   name: 'vitalik.abs',
+ * const { data: isAvailable, isLoading } = useNameAvailability({
+ *   name: 'vitalik',
  *   config: abstractTestnetConfig
  * });
+ *
+ * if (isLoading) return <div>Checking...</div>;
+ * if (isAvailable) return <div>Name available!</div>;
  * ```
  */
-export function useResolve({
+export function useNameAvailability({
   name,
   config,
   enabled = true,
-}: UseResolveParams): UseResolveResult {
+}: UseNameAvailabilityParams): UseNameAvailabilityResult {
   // Normalize name - remove .abs suffix if present
   const normalizedName = name?.replace(/\.abs$/, '');
 
   const { data, isLoading, error, refetch } = useReadContract({
-    address: config.resolverAddress,
-    abi: resolverAbi,
-    functionName: 'resolve',
+    address: config.registryAddress,
+    abi: registryAbi,
+    functionName: 'isAvailable',
     args: normalizedName ? [normalizedName] : undefined,
     chainId: config.chainId,
     query: {
-      enabled: enabled && !!normalizedName,
+      enabled: enabled && !!normalizedName && normalizedName.length >= 3,
     },
   });
 
-  // Filter out zero address
-  const resolvedAddress =
-    data && data !== '0x0000000000000000000000000000000000000000'
-      ? data
-      : undefined;
-
   return {
-    data: resolvedAddress,
+    data,
     isLoading,
     error: error as Error | null,
     refetch,

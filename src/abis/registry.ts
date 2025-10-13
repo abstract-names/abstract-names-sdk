@@ -1,6 +1,25 @@
 export const registryAbi = [
   {
     type: 'function',
+    name: 'isAvailable',
+    inputs: [
+      {
+        name: 'name',
+        type: 'string',
+        internalType: 'string',
+      },
+    ],
+    outputs: [
+      {
+        name: '',
+        type: 'bool',
+        internalType: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
     name: 'getNameData',
     inputs: [
       {
