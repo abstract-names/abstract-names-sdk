@@ -1,6 +1,6 @@
 {
   "name": "@abstract-names/sdk",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "React SDK for Abstract Names - name resolution and profiles",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
