@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2025-10-13
+
+### Added
+- `AbstractNamesProvider` component for optional chain override via React Context
+- Auto-detection of active chain from wagmi's `useChainId()` hook
+
+### Changed
+- **BREAKING**: All hooks no longer require a `chain` or `config` parameter - they auto-detect the active chain from wagmi
+- **BREAKING**: Removed `chainId` field from `AbstractNamesConfig` interface
+- **BREAKING**: Renamed `getConfig` to `getConfigForChainId` and it now accepts a `chainId` number
+- Hooks now automatically use wagmi's active chain, with optional override via `AbstractNamesProvider`
+- `getConfigForChainId` returns `undefined` instead of throwing errors for unsupported chains
+- Simplified API - no need to pass chain to every hook call
+
+### Removed
+- **BREAKING**: Removed `abstractTestnetConfig` and `abstractMainnetConfig` exports (use auto-detection instead)
+- **BREAKING**: Removed `createConfig` function (no longer needed)
+- **BREAKING**: Removed `chain` parameter from all hook interfaces
+
 ## [0.2.0] - 2024-10-13
 
 ### Added

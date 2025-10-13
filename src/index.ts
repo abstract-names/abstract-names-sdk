@@ -3,12 +3,11 @@
 // ABIs (for advanced usage)
 export { registryAbi } from './abis/registry';
 export { resolverAbi } from './abis/resolver';
-// Config
+// Config (for advanced usage)
 export {
-  abstractMainnetConfig,
-  abstractTestnetConfig,
-  createConfig,
-  getConfig,
+  ABSTRACT_MAINNET_CHAIN_ID,
+  ABSTRACT_TESTNET_CHAIN_ID,
+  getConfigForChainId,
 } from './config';
 export type {
   UseAllowedTextKeysParams,
@@ -28,7 +27,6 @@ export type {
 export { useNameExpiry } from './hooks/useNameExpiry';
 export type { UseProfileParams, UseProfileResult } from './hooks/useProfile';
 export { useProfile } from './hooks/useProfile';
-// Hook types
 export type { UseResolveParams, UseResolveResult } from './hooks/useResolve';
 export { useResolve } from './hooks/useResolve';
 export type {
@@ -41,6 +39,9 @@ export type {
   UseTextRecordResult,
 } from './hooks/useTextRecord';
 export { useTextRecord } from './hooks/useTextRecord';
+// Provider
+export type { AbstractNamesProviderProps } from './provider';
+export { AbstractNamesProvider } from './provider';
 // Types
 export type {
   AbstractNamesConfig,

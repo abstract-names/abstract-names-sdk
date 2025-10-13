@@ -1,15 +1,15 @@
 import type { Address } from 'viem';
 import { isAddress } from 'viem';
-import { useReadContract } from 'wagmi';
+import { useChainId, useReadContract } from 'wagmi';
 import { registryAbi } from '../abis/registry';
 import { resolverAbi } from '../abis/resolver';
-import type { AbstractNamesConfig, NameProfile } from '../types';
+import { getConfigForChainId } from '../config';
+import { useAbstractNamesContext } from '../provider';
+import type { NameProfile } from '../types';
 
 export interface UseProfileParams {
   /** Name (e.g., "vitalik.abs") or address to get profile for */
   nameOrAddress?: string;
-  /** Configuration with contract addresses */
-  config: AbstractNamesConfig;
   /** Enable/disable the query */
   enabled?: boolean;
 }
@@ -33,18 +33,18 @@ export interface UseProfileResult {
  * If an address is provided, it fetches the primary name profile for that address.
  * If a name is provided, it fetches the profile for that name.
  *
+ * Automatically uses the active chain from wagmi, or the chain specified in AbstractNamesProvider.
+ *
  * @example
  * ```tsx
  * // By name
  * const { data: profile, getTextRecord } = useProfile({
- *   nameOrAddress: 'vitalik.abs',
- *   config: abstractTestnetConfig
+ *   nameOrAddress: 'vitalik.abs'
  * });
  *
  * // By address (gets primary name profile)
  * const { data: profile } = useProfile({
- *   nameOrAddress: '0x1234...',
- *   config: abstractTestnetConfig
+ *   nameOrAddress: '0x1234...'
  * });
  *
  * // Get specific text record
@@ -53,9 +53,13 @@ export interface UseProfileResult {
  */
 export function useProfile({
   nameOrAddress,
-  config,
   enabled = true,
 }: UseProfileParams): UseProfileResult {
+  const wagmiChainId = useChainId();
+  const context = useAbstractNamesContext();
+  const chainId = context?.chainId ?? wagmiChainId;
+  const config = getConfigForChainId(chainId);
+
   const isAddr = nameOrAddress ? isAddress(nameOrAddress) : false;
 
   // For names: first get tokenId, then get profile
@@ -63,13 +67,12 @@ export function useProfile({
     !isAddr && nameOrAddress ? nameOrAddress.replace(/\.abs$/, '') : undefined;
 
   const { data: tokenId } = useReadContract({
-    address: config.registryAddress,
+    address: config?.registryAddress,
     abi: registryAbi,
     functionName: 'getTokenId',
     args: normalizedName ? [normalizedName] : undefined,
-    chainId: config.chainId,
     query: {
-      enabled: enabled && !!normalizedName,
+      enabled: enabled && !!normalizedName && !!config,
     },
   });
 
@@ -80,13 +83,12 @@ export function useProfile({
     error: errorByTokenId,
     refetch: refetchByTokenId,
   } = useReadContract({
-    address: config.resolverAddress,
+    address: config?.resolverAddress,
     abi: resolverAbi,
     functionName: 'getNameData',
     args: tokenId ? [tokenId] : undefined,
-    chainId: config.chainId,
     query: {
-      enabled: enabled && !!tokenId && tokenId !== 0n,
+      enabled: enabled && !!tokenId && tokenId !== 0n && !!config,
     },
   });
 
@@ -97,13 +99,12 @@ export function useProfile({
     error: errorByAddress,
     refetch: refetchByAddress,
   } = useReadContract({
-    address: config.resolverAddress,
+    address: config?.resolverAddress,
     abi: resolverAbi,
     functionName: 'getPrimaryData',
     args: isAddr && nameOrAddress ? [nameOrAddress as Address] : undefined,
-    chainId: config.chainId,
     query: {
-      enabled: enabled && isAddr && !!nameOrAddress,
+      enabled: enabled && isAddr && !!nameOrAddress && !!config,
     },
   });
 

@@ -1,13 +1,12 @@
 import type { Address } from 'viem';
-import { useReadContract } from 'wagmi';
+import { useChainId, useReadContract } from 'wagmi';
 import { resolverAbi } from '../abis/resolver';
-import type { AbstractNamesConfig } from '../types';
+import { getConfigForChainId } from '../config';
+import { useAbstractNamesContext } from '../provider';
 
 export interface UseReverseResolveParams {
   /** The address to reverse resolve */
   address?: Address;
-  /** Configuration with contract addresses */
-  config: AbstractNamesConfig;
   /** Enable/disable the query */
   enabled?: boolean;
 }
@@ -26,27 +25,31 @@ export interface UseReverseResolveResult {
 /**
  * Hook to reverse resolve an address to its primary Abstract Name
  *
+ * Automatically uses the active chain from wagmi, or the chain specified in AbstractNamesProvider.
+ *
  * @example
  * ```tsx
  * const { data: name, isLoading } = useReverseResolve({
- *   address: '0x1234...',
- *   config: abstractTestnetConfig
+ *   address: '0x1234...'
  * });
  * ```
  */
 export function useReverseResolve({
   address,
-  config,
   enabled = true,
 }: UseReverseResolveParams): UseReverseResolveResult {
+  const wagmiChainId = useChainId();
+  const context = useAbstractNamesContext();
+  const chainId = context?.chainId ?? wagmiChainId;
+  const config = getConfigForChainId(chainId);
+
   const { data, isLoading, error, refetch } = useReadContract({
-    address: config.resolverAddress,
+    address: config?.resolverAddress,
     abi: resolverAbi,
     functionName: 'reverseResolve',
     args: address ? [address] : undefined,
-    chainId: config.chainId,
     query: {
-      enabled: enabled && !!address,
+      enabled: enabled && !!address && !!config,
     },
   });
 

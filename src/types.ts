@@ -14,8 +14,6 @@ export interface AbstractNamesConfig {
   rendererAddress: Address;
   /** Address of the AbstractNamesValidator contract */
   validatorAddress: Address;
-  /** Chain ID where contracts are deployed */
-  chainId: number;
 }
 
 /**

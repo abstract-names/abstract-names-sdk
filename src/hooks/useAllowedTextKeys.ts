@@ -1,10 +1,9 @@
-import { useReadContract } from 'wagmi';
+import { useChainId, useReadContract } from 'wagmi';
 import { resolverAbi } from '../abis/resolver';
-import type { AbstractNamesConfig } from '../types';
+import { getConfigForChainId } from '../config';
+import { useAbstractNamesContext } from '../provider';
 
 export interface UseAllowedTextKeysParams {
-  /** Configuration with contract addresses */
-  config: AbstractNamesConfig;
   /** Enable/disable the query */
   enabled?: boolean;
 }
@@ -25,11 +24,11 @@ export interface UseAllowedTextKeysResult {
  *
  * Useful for building profile editors and knowing which fields are supported.
  *
+ * Automatically uses the active chain from wagmi, or the chain specified in AbstractNamesProvider.
+ *
  * @example
  * ```tsx
- * const { data: allowedKeys } = useAllowedTextKeys({
- *   config: abstractTestnetConfig
- * });
+ * const { data: allowedKeys } = useAllowedTextKeys();
  *
  * // Use in a form builder
  * {allowedKeys?.map(key => (
@@ -38,16 +37,19 @@ export interface UseAllowedTextKeysResult {
  * ```
  */
 export function useAllowedTextKeys({
-  config,
   enabled = true,
-}: UseAllowedTextKeysParams): UseAllowedTextKeysResult {
+}: UseAllowedTextKeysParams = {}): UseAllowedTextKeysResult {
+  const wagmiChainId = useChainId();
+  const context = useAbstractNamesContext();
+  const chainId = context?.chainId ?? wagmiChainId;
+  const config = getConfigForChainId(chainId);
+
   const { data, isLoading, error, refetch } = useReadContract({
-    address: config.resolverAddress,
+    address: config?.resolverAddress,
     abi: resolverAbi,
     functionName: 'getAllowedTextKeys',
-    chainId: config.chainId,
     query: {
-      enabled,
+      enabled: enabled && !!config,
     },
   });
 

@@ -1,12 +1,11 @@
-import { useReadContract } from 'wagmi';
+import { useChainId, useReadContract } from 'wagmi';
 import { registryAbi } from '../abis/registry';
-import type { AbstractNamesConfig } from '../types';
+import { getConfigForChainId } from '../config';
+import { useAbstractNamesContext } from '../provider';
 
 export interface UseNameAvailabilityParams {
   /** The name to check availability for (without .abs suffix) */
   name?: string;
-  /** Configuration with contract addresses */
-  config: AbstractNamesConfig;
   /** Enable/disable the query */
   enabled?: boolean;
 }
@@ -25,11 +24,12 @@ export interface UseNameAvailabilityResult {
 /**
  * Hook to check if a name is available for registration
  *
+ * Automatically uses the active chain from wagmi, or the chain specified in AbstractNamesProvider.
+ *
  * @example
  * ```tsx
  * const { data: isAvailable, isLoading } = useNameAvailability({
- *   name: 'vitalik',
- *   config: abstractTestnetConfig
+ *   name: 'vitalik'
  * });
  *
  * if (isLoading) return <div>Checking...</div>;
@@ -38,20 +38,24 @@ export interface UseNameAvailabilityResult {
  */
 export function useNameAvailability({
   name,
-  config,
   enabled = true,
 }: UseNameAvailabilityParams): UseNameAvailabilityResult {
+  const wagmiChainId = useChainId();
+  const context = useAbstractNamesContext();
+  const chainId = context?.chainId ?? wagmiChainId;
+  const config = getConfigForChainId(chainId);
+
   // Normalize name - remove .abs suffix if present
   const normalizedName = name?.replace(/\.abs$/, '');
 
   const { data, isLoading, error, refetch } = useReadContract({
-    address: config.registryAddress,
+    address: config?.registryAddress,
     abi: registryAbi,
     functionName: 'isAvailable',
     args: normalizedName ? [normalizedName] : undefined,
-    chainId: config.chainId,
     query: {
-      enabled: enabled && !!normalizedName && normalizedName.length >= 3,
+      enabled:
+        enabled && !!normalizedName && normalizedName.length >= 3 && !!config,
     },
   });
 

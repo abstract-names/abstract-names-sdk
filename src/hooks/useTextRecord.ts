@@ -1,15 +1,15 @@
-import { useReadContract } from 'wagmi';
+import { useChainId, useReadContract } from 'wagmi';
 import { registryAbi } from '../abis/registry';
 import { resolverAbi } from '../abis/resolver';
-import type { AbstractNamesConfig, TextRecordKey } from '../types';
+import { getConfigForChainId } from '../config';
+import { useAbstractNamesContext } from '../provider';
+import type { TextRecordKey } from '../types';
 
 export interface UseTextRecordParams {
   /** Name to get text record for (e.g., "vitalik" or "vitalik.abs") */
   name?: string;
   /** Text record key to fetch */
   key?: TextRecordKey | string;
-  /** Configuration with contract addresses */
-  config: AbstractNamesConfig;
   /** Enable/disable the query */
   enabled?: boolean;
 }
@@ -30,51 +30,53 @@ export interface UseTextRecordResult {
  *
  * More focused than useProfile when you only need one field.
  *
+ * Automatically uses the active chain from wagmi, or the chain specified in AbstractNamesProvider.
+ *
  * @example
  * ```tsx
  * const { data: avatar } = useTextRecord({
  *   name: 'vitalik.abs',
- *   key: 'avatar',
- *   config: abstractTestnetConfig
+ *   key: 'avatar'
  * });
  *
  * const { data: twitter } = useTextRecord({
  *   name: 'vitalik.abs',
- *   key: 'com.x',
- *   config: abstractTestnetConfig
+ *   key: 'com.x'
  * });
  * ```
  */
 export function useTextRecord({
   name,
   key,
-  config,
   enabled = true,
 }: UseTextRecordParams): UseTextRecordResult {
+  const wagmiChainId = useChainId();
+  const context = useAbstractNamesContext();
+  const chainId = context?.chainId ?? wagmiChainId;
+  const config = getConfigForChainId(chainId);
+
   // Normalize name - remove .abs suffix if present
   const normalizedName = name?.replace(/\.abs$/, '');
 
   // First get tokenId
   const { data: tokenId } = useReadContract({
-    address: config.registryAddress,
+    address: config?.registryAddress,
     abi: registryAbi,
     functionName: 'getTokenId',
     args: normalizedName ? [normalizedName] : undefined,
-    chainId: config.chainId,
     query: {
-      enabled: enabled && !!normalizedName,
+      enabled: enabled && !!normalizedName && !!config,
     },
   });
 
   // Then get text record
   const { data, isLoading, error, refetch } = useReadContract({
-    address: config.resolverAddress,
+    address: config?.resolverAddress,
     abi: resolverAbi,
     functionName: 'getText',
     args: tokenId && key ? [tokenId, key] : undefined,
-    chainId: config.chainId,
     query: {
-      enabled: enabled && !!tokenId && tokenId !== 0n && !!key,
+      enabled: enabled && !!tokenId && tokenId !== 0n && !!key && !!config,
     },
   });
 
