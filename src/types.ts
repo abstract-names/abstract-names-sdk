@@ -69,3 +69,10 @@ export const TEXT_RECORD_KEYS = [
 ] as const;
 
 export type TextRecordKey = (typeof TEXT_RECORD_KEYS)[number];
+
+/**
+ * Error handling types
+ * Re-exported from errors.ts for convenient access
+ */
+export type { AbstractNamesError } from './errors';
+export { ErrorType } from './errors';

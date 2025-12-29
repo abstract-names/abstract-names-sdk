@@ -1,6 +1,8 @@
 import { useChainId, useReadContract } from 'wagmi';
 import { registryAbi } from '../abis/registry';
 import { getConfigForChainId } from '../config';
+import type { AbstractNamesError } from '../errors';
+import { parseContractError } from '../errors';
 import { useAbstractNamesContext } from '../provider';
 
 export interface NameExpiryData {
@@ -28,8 +30,10 @@ export interface UseNameExpiryResult {
   data: NameExpiryData | undefined;
   /** Loading state */
   isLoading: boolean;
-  /** Error state */
-  error: Error | null;
+  /** Structured error with user-friendly message */
+  error: AbstractNamesError | null;
+  /** Raw error from wagmi (for debugging) */
+  rawError: Error | null;
   /** Refetch function */
   refetch: () => void;
 }
@@ -113,7 +117,8 @@ export function useNameExpiry({
   return {
     data: expiryData,
     isLoading,
-    error: error as Error | null,
+    error: parseContractError(error as Error | null),
+    rawError: error as Error | null,
     refetch,
   };
 }

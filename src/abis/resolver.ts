@@ -204,4 +204,107 @@ export const resolverAbi = [
     ],
     stateMutability: 'view',
   },
+  // Write functions
+  {
+    type: 'function',
+    name: 'setText',
+    inputs: [
+      {
+        name: 'tokenId',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+      {
+        name: 'key',
+        type: 'string',
+        internalType: 'string',
+      },
+      {
+        name: 'value',
+        type: 'string',
+        internalType: 'string',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'batchSetText',
+    inputs: [
+      {
+        name: 'tokenId',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+      {
+        name: 'keys',
+        type: 'string[]',
+        internalType: 'string[]',
+      },
+      {
+        name: 'values',
+        type: 'string[]',
+        internalType: 'string[]',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'setPrimaryName',
+    inputs: [
+      {
+        name: 'tokenId',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    name: 'unsetPrimaryName',
+    inputs: [],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'setAddress',
+    inputs: [
+      {
+        name: 'tokenId',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+      {
+        name: 'addr',
+        type: 'address',
+        internalType: 'address',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    name: 'setContentHash',
+    inputs: [
+      {
+        name: 'tokenId',
+        type: 'uint256',
+        internalType: 'uint256',
+      },
+      {
+        name: 'hash',
+        type: 'bytes',
+        internalType: 'bytes',
+      },
+    ],
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
 ] as const;

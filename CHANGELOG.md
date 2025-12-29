@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2025-12-29
+
+### Added
+- **Structured Error Handling**: All hooks now return `AbstractNamesError` with user-friendly messages
+- **Name Validation**: `useValidateName` hook for contract-based validation (supports Unicode)
+- **Debounced Validation**: `useValidateNameDebounced` hook reduces RPC calls by ~70%
+- **Text Record Writes**: `useSetTextRecord`, `useBatchSetText`, `useSetPrimaryName`, `useSetAddress` hooks
+- **Pricing & Phases**: `useNamePrice` and `useMintPhase` hooks for tier pricing and phase detection
+- **Controller ABI**: Added controller contract ABI with pricing functions
+- **Validator ABI**: Added validator contract ABI with Unicode support
+- **Performance**: Added `sideEffects: false` to package.json for tree-shaking
+- **Error Types**: 10 categorized error types (VALIDATION_ERROR, UNAUTHORIZED, NAME_EXPIRED, etc.)
+
+### Changed
+- **BREAKING**: Hook `error` field changed from `Error | null` to `AbstractNamesError | null`
+- All hooks now include `rawError: Error | null` for backward compatibility
+- Error messages are now user-friendly (e.g., "Name must be between 3 and 63 characters")
+- Expanded Resolver ABI with write functions (setText, batchSetText, setPrimaryName, etc.)
+
+### Migration
+Replace `error.message` with `error.userMessage` for user-facing error displays. Use `rawError` for debugging.
+
 ## [0.2.1] - 2025-10-13
 
 ### Added

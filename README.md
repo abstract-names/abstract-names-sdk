@@ -6,6 +6,9 @@
 
 React SDK for interacting with Abstract Names contracts. Provides simple hooks for name resolution, reverse resolution, and profile data.
 
+## WARNING: NOT PRODUCTION READY YET
+This project is ongoing development. Please wait before the first major version before using this in production environments.
+
 ## Installation
 
 ```bash
@@ -67,10 +70,12 @@ function MyComponent() {
 ## Features
 
 - ✅ **Auto-Detection** - Automatically uses the active chain from wagmi
-- ✅ **Minimal & Clean** - 7 focused hooks covering essential use cases
+- ✅ **Comprehensive** - 15 hooks covering read, write, validation, and pricing
+- ✅ **Structured Errors** - User-friendly error messages for better UX
 - ✅ **TypeScript First** - Full type safety with TypeScript
-- ✅ **wagmi Integration** - Built on top of wagmi for optimal React integration
-- ✅ **Tree Shakeable** - Import only what you need
+- ✅ **wagmi Integration** - Built on wagmi v2 with TanStack Query v5
+- ✅ **Tree Shakeable** - Import only what you need (sideEffects: false)
+- ✅ **Performance Optimized** - Debounced validation, minimal re-renders
 - ✅ **Works with Any Wallet** - Compatible with RainbowKit, Privy, Dynamic, WalletConnect, or native implementations
 
 ## Available Hooks
@@ -80,9 +85,23 @@ function MyComponent() {
 - `useReverseResolve` - Get primary name for address
 - `useProfile` - Get complete profile data including text records
 
+**Validation:**
+- `useValidateName` - Contract-based name validation (Unicode support)
+- `useValidateNameDebounced` - Debounced validation (reduces RPC calls ~70%)
+
+**Write Operations:**
+- `useSetTextRecord` - Set individual text records
+- `useBatchSetText` - Gas-efficient batch updates
+- `useSetPrimaryName` - Set/unset primary names (with fee)
+- `useSetAddress` - Set resolved address
+
+**Pricing & Phases:**
+- `useNamePrice` - Tier-based pricing info
+- `useMintPhase` - Current phase detection
+
 **Utilities:**
-- `useNameAvailability` - Check if a name is available for registration
-- `useNameExpiry` - Get expiration info with days until expiry
+- `useNameAvailability` - Check if name is available
+- `useNameExpiry` - Expiration info with days until expiry
 - `useTextRecord` - Fetch individual text records
 - `useAllowedTextKeys` - Get supported text record keys
 

@@ -1,6 +1,6 @@
 {
   "name": "@abstract-names/sdk",
-  "version": "0.2.1",
+  "version": "0.4.0",
   "description": "React SDK for Abstract Names - name resolution and profiles",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -16,6 +16,7 @@
     "dist",
     "CHANGELOG.md"
   ],
+  "sideEffects": false,
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
@@ -45,11 +46,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/abstract-names/sdk"
+    "url": "https://github.com/abstract-names/abstract-names-sdk"
   },
-  "homepage": "https://github.com/abstract-names/sdk#readme",
+  "homepage": "https://github.com/abstract-names/abstract-names-sdk#readme",
   "bugs": {
-    "url": "https://github.com/abstract-names/sdk/issues"
+    "url": "https://github.com/abstract-names/abstract-names-sdk/issues"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",

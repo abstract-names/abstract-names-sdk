@@ -2,6 +2,8 @@ import type { Address } from 'viem';
 import { useChainId, useReadContract } from 'wagmi';
 import { resolverAbi } from '../abis/resolver';
 import { getConfigForChainId } from '../config';
+import type { AbstractNamesError } from '../errors';
+import { parseContractError } from '../errors';
 import { useAbstractNamesContext } from '../provider';
 
 export interface UseResolveParams {
@@ -16,8 +18,10 @@ export interface UseResolveResult {
   data: Address | undefined;
   /** Loading state */
   isLoading: boolean;
-  /** Error state */
-  error: Error | null;
+  /** Structured error with user-friendly message */
+  error: AbstractNamesError | null;
+  /** Raw error from wagmi (for debugging) */
+  rawError: Error | null;
   /** Refetch function */
   refetch: () => void;
 }
@@ -65,7 +69,8 @@ export function useResolve({
   return {
     data: resolvedAddress,
     isLoading,
-    error: error as Error | null,
+    error: parseContractError(error as Error | null),
+    rawError: error as Error | null,
     refetch,
   };
 }
